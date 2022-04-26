@@ -17,11 +17,15 @@ main:
         li $a1, 1001                    # initializes pointer
         syscall                         # prompts system call
         la $s0, input                   # saves the address of input to $s0
+        # push the sub_a parameters to stack
 
 sub_a:
-        addi $sp, $sp, -4
-        sw $ra, 0($sp)
-        lw $t0, 4($sp)
-        li $t1, $zero
-        li $t2, ‘;’
-        li $t3, $zero
+        addi $sp, $sp, -4               
+        sw $ra, 0($sp)                  # pushes the return address to the stack
+        lw $t0, 4($sp)                  # loads the string address into the subprogram
+        li $t1, $zero                   # initializes the length of the string
+        li $t2, ‘;’                     # register for ';' value
+        li $t3, $zero                   # register for '0' value
+
+        addi $sp, $sp, -4               
+        sw $t0, 0($sp)                  # pushes initial pointer value into stack
