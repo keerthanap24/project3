@@ -29,3 +29,9 @@ sub_a:
 
         addi $sp, $sp, -4               
         sw $t0, 0($sp)                  # pushes initial pointer value into stack
+        loop:
+            beq $t2, 0($t0), continue   # if pointer value is ';' branch to continue label
+            beq $t3, 0($t0), continue   # if pointer value is zero branch to continue label
+            addi $t1, $t1, 1            # else increment length by one
+            addi $t0, $t0, 1            # else increment pointer by one
+            j loop                      # jump back to beginning of loop
