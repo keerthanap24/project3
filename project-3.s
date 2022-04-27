@@ -165,7 +165,7 @@ sub_b:
                 j exponent_loop                 # jumps to beginning of exponent loop
         else_1:
                 mul $t5, $t5, $t1		# convert character
-                add $v0, $v0, $t5		# add conversion of current character to sum
+                sw $t5, 20($sp)                 # push final conversion to stack
                 addi $a1, $a1, 1		# increment string pointer
                 addi $t0, $t0, 1		# increment loop index
                 j loop_3                        # jumps back to loop_3
@@ -186,7 +186,7 @@ sub_b:
                 j exponent_loop2                # jumps to beginning of exponent loop
         else_2:
                 mul $t5, $t5, $t1		# convert character
-                add $v0, $v0, $t5		# add conversion of current character to sum
+                sw $t5, 20($sp)                 # push final conversion to stack
                 addi $a1, $a1, 1		# increment string pointer
                 addi $t0, $t0, 1		# increment loop index
                 j loop_3                        # jumps back to loop_3
@@ -207,7 +207,7 @@ sub_b:
                 j exponent_loop3                # jumps to beginning of exponent loop
         else_3:
                 mul $t5, $t5, $t1		# convert character
-                add $v0, $v0, $t5		# add conversion of current character to sum
+                sw $t5, 20($sp)                 # push final conversion to stack
                 addi $a1, $a1, 1		# increment string pointer
                 addi $t0, $t0, 1		# increment loop index
                 j loop_3                        # jumps back to loop_3
