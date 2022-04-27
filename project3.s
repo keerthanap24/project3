@@ -13,69 +13,69 @@
 
 main:
         # reads input from user
-        li $v0, 8                       # syscall for read input
-        la $a0, input                   # loads address of input to $a0
-        li $a1, 1001                    # initializes pointer
-        syscall                         # prompts system call
-        la $s0, input                   # saves the address of input to $s0
-        addi $sp, $sp, -4               # pass input string as a parameter to sub_a on stack
+        li $v0, 8                                       # syscall for read input
+        la $a0, input                                   # loads address of input to $a0
+        li $a1, 1001                                    # initializes pointer
+        syscall                                         # prompts system call
+        la $s0, input                                   # saves the address of input to $s0
+        addi $sp, $sp, -4                               # pass input string as a parameter to sub_a on stack
         sw $s0, 0($sp)
-        jal sub_a                       #call sub_a
-        li $v0, 10                      # mips system call to exit program
+        jal sub_a                                       # call sub_a
+        li $v0, 10                                      # mips system call to exit program
 	syscall
 
 sub_a:
-        lw $t0, 0($sp)                  # loads the string address into the subprogram from stack        
+        lw $t0, 0($sp)                                  # loads the string address into the subprogram from stack        
         
         # t0 = string addr, t1 = length t2=';' t3 = '\0'
-        li $t1, 0                   # initializes the length of the string
-        li $t2, 59                      # register for ';' ascii value
-        li $t3, 0                   # register for '\0' value
+        li $t1, 0                                       # initializes the length of the string
+        li $t2, 59                                      # register for ';' ascii value
+        li $t3, 0                                       # register for '\0' value
 
         loop: 
-                addi $sp, $sp, -4           #push the sub string pointer on the stack
+                addi $sp, $sp, -4                       #push the sub string pointer on the stack
                 sw $t0, 0($sp)
 
                 loop_find_length:
-                        lw $t7, 0($t0)
-                        beq $t2, $t7, continue   # if pointer value is ';' branch to continue label
-                        beq $t3, $t7, continue   # if pointer value is zero branch to continue label
-                        addi $t1, $t1, 1            # else increment length by one
-                        addi $t0, $t0, 1            # goto next character
-                        j loop_find_length          # jump back to beginning of loop
+                        lb $t7, 0($t0)
+                        beq $t2, $t7, continue          # if pointer value is ';' branch to continue label
+                        beq $t3, $t7, continue          # if pointer value is zero branch to continue label
+                        addi $t1, $t1, 1                # else increment length by one
+                        addi $t0, $t0, 1                # goto next character
+                        j loop_find_length              # jump back to beginning of loop
                 continue:
-                        beqz $t7, exit_sub_a        # if end of the string exit sub_a
-                        addi $sp, $sp, -12          # else push the length of the string and two return values on to stack
-                        sw $t1, 8($sp)              # push length of string onto stack
+                        beqz $t7, exit_sub_a            # if end of the string exit sub_a
+                        addi $sp, $sp, -12              # else push the length of the string and two return values on to stack
+                        sw $t1, 8($sp)                  # push length of string onto stack
 
-                        addi $sp, $sp, -16          # push register values to stack to use them in sub_b
+                        addi $sp, $sp, -16              # push register values to stack to use them in sub_b
                         sw $t0, 12($sp)
                         sw $t1, 8($sp)
                         sw $t2, 4($sp)
                         sw $t3, 0($sp)
-                        jal sub_b                   # calls subprogram b
-                        lw $t3, 0($sp)              # pulling register values back after sub_b used them
+                        jal sub_b                       # calls subprogram b
+                        lw $t3, 0($sp)                  # pulling register values back after sub_b used them
                         lw $t2, 4($sp)
                         lw $t1, 8($sp)
                         lw $t0, 12($sp)                
-                        lw $t4, 16($sp)             # gets return value (0 or 1) check return value 1 for success or failure
-                        lw $t5, 20($sp)             # gets decimal return value from stack
-                        addi $sp, $sp, 28           # pop the stack 
-                        beqz $t4, invalid           # if return value is zero branch to invalid label
-                        li $v0, 1                   # syscall for print decimal
-                        add $a0, $t5, 0             # a0 should be decimal to print
+                        lw $t4, 16($sp)                 # gets return value (0 or 1) check return value 1 for success or failure
+                        lw $t5, 20($sp)                 # gets decimal return value from stack
+                        addi $sp, $sp, 28               # pop the stack 
+                        beqz $t4, invalid               # if return value is zero branch to invalid label
+                        li $v0, 1                       # syscall for print decimal
+                        add $a0, $t5, 0                 # a0 should be decimal to print
                         syscall
                 sub_string_done:
-                        beqz $t7, exit_sub_a        # if end of the string exit sub_a
-                        li $v0, 4                   # prints comma if semicolon is found
+                        beqz $t7, exit_sub_a            # if end of the string exit sub_a
+                        li $v0, 4                       # prints comma if semicolon is found
                         la $a0, comma
                         syscall
-                        addi $t0, $t0, 1            # increment pointer to character after semicolon
-                        li $t1, 0                   # start length count again from 0
-                        j loop                      # jump back to beginning of loop label
+                        addi $t0, $t0, 1                # increment pointer to character after semicolon
+                        li $t1, 0                       # start length count again from 0
+                        j loop                          # jump back to beginning of loop label
                 invalid:
-                        la $a0, message             # load address of message (defined in data section) to $a0
-                        li $v0, 4                   # system call for print message
+                        la $a0, message                 # load address of message (defined in data section) to $a0
+                        li $v0, 4                       # system call for print message
                         syscall                 
                         j sub_string_done
                 exit_sub_a:
