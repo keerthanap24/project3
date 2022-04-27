@@ -35,3 +35,8 @@ sub_a:
             addi $t1, $t1, 1            # else increment length by one
             addi $t0, $t0, 1            # else increment pointer by one
             j loop                      # jump back to beginning of loop
+        continue:
+            beqz $t1, jr $ra            # if length of string is zero exit subprogram
+            addi $sp, $sp, -12
+            sw $t1, 8($sp)              # push length of string onto stack
+                                        # push two more values on to the stack for return values
