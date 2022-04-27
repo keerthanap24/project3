@@ -40,3 +40,9 @@ sub_a:
             addi $sp, $sp, -12
             sw $t1, 8($sp)              # push length of string onto stack
                                         # push two more values on to the stack for return values
+            jal sub_b                   # calls subprogram b
+            lw $t4, 0($sp)              # gets return value (0 or 1) check return value 1 for success or failure
+            beq $t4, $zero, invalid     # if return value is zero branch to invalid label
+            lw $t5, 4($sp)              # gets decimal return value from stack
+            li $v0, 1                   # syscall for print decimal
+            syscall
