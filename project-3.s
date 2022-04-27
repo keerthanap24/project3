@@ -41,11 +41,19 @@ sub_a:
                 addi $sp, $sp, -12  
                 sw $t1, 8($sp)              # push length of string onto stack
                                             # push two more values on to the stack for return values
-                # push register values to stack to use them in sub_b
+                addi $sp, $sp, -16          # push register values to stack to use them in sub_b
+                sw $t0, 12($sp)
+                sw $t1, 8($sp)
+                sw $t2, 4($sp)
+                sw $t3, 0($sp)
                 jal sub_b                   # calls subprogram b
-                lw $t4, 0($sp)              # gets return value (0 or 1) check return value 1 for success or failure
+                lw $t3, 0($sp)              # pulling register values back after sub_b used them
+                lw $t2, 4($sp)
+                lw $t1, 8($sp)
+                lw $t0, 12($sp)                
+                lw $t4, 16($sp)             # gets return value (0 or 1) check return value 1 for success or failure
                 beq $t4, $zero, invalid     # if return value is zero branch to invalid label
-                lw $t5, 4($sp)              # gets decimal return value from stack
+                lw $t5, 20($sp)             # gets decimal return value from stack
                 li $v0, 1                   # syscall for print decimal
                 syscall
                 beq $t0, $t2, comma         # branch to comma label if last character is semicolon
@@ -69,7 +77,7 @@ sub_b:
         addi $s1, $t1, 0                        # stores string length in $s0 (saved register)
         add $v1, $t0, $s1                       # finds the address of the last character
         addi $s2, $v1, 0                        # stores last character address to $s2
-        beqz $s1, invalid		        # if length of string is 0 exit the program
+        beqz $s1, jr $ra		        # if length of string is 0 exit the program
 
         move $a0, $s1		                # pass length of string as an argument for whitespace subprogram
         move $a1, $s0		                # pass pointer to beginning of string as an argument for whitespace subprogram
