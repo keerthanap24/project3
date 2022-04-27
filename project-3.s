@@ -30,25 +30,28 @@ sub_a:
         addi $sp, $sp, -4               
         sw $t0, 0($sp)                  # pushes initial pointer value into stack
         loop:
-            beq $t2, 0($t0), continue   # if pointer value is ';' branch to continue label
-            beq $t3, 0($t0), continue   # if pointer value is zero branch to continue label
-            addi $t1, $t1, 1            # else increment length by one
-            addi $t0, $t0, 1            # else increment pointer by one
-            j loop                      # jump back to beginning of loop
+                beq $t2, 0($t0), continue   # if pointer value is ';' branch to continue label
+                beq $t3, 0($t0), continue   # if pointer value is zero branch to continue label
+                addi $t1, $t1, 1            # else increment length by one
+                addi $t0, $t0, 1            # else increment pointer by one
+                j loop                      # jump back to beginning of loop
         continue:
-            lw $ra, 16($sp)             # call return address back from stack
-            beqz $t1, jr $ra            # if length of string is zero exit subprogram
-            addi $sp, $sp, -12  
-            sw $t1, 8($sp)              # push length of string onto stack
+                lw $ra, 16($sp)             # call return address back from stack
+                beqz $t1, jr $ra            # if length of string is zero exit subprogram
+                addi $sp, $sp, -12  
+                sw $t1, 8($sp)              # push length of string onto stack
                                         # push two more values on to the stack for return values
-            jal sub_b                   # calls subprogram b
-            lw $t4, 0($sp)              # gets return value (0 or 1) check return value 1 for success or failure
-            beq $t4, $zero, invalid     # if return value is zero branch to invalid label
-            lw $t5, 4($sp)              # gets decimal return value from stack
-            li $v0, 1                   # syscall for print decimal
-            syscall
-            beq $t0, $t2, comma         # branch to comma label if last character is semicolon
-            beqz $t0, jr $ra            # if last character is zero exit the loop
-            addi $t0, $t0, 1            # increment pointer to character after semicolon
-            li $t1, $zero               # start length count again from 0
-            j loop                      # jump back to beginning of loop label
+                jal sub_b                   # calls subprogram b
+                lw $t4, 0($sp)              # gets return value (0 or 1) check return value 1 for success or failure
+                beq $t4, $zero, invalid     # if return value is zero branch to invalid label
+                lw $t5, 4($sp)              # gets decimal return value from stack
+                li $v0, 1                   # syscall for print decimal
+                syscall
+                beq $t0, $t2, comma         # branch to comma label if last character is semicolon
+                beqz $t0, jr $ra            # if last character is zero exit the loop
+                addi $t0, $t0, 1            # increment pointer to character after semicolon
+                li $t1, $zero               # start length count again from 0
+                j loop                      # jump back to beginning of loop label
+        comma:
+                li $t6, ','
+                li $v0, 4                   # prints comma if semicolon is found
