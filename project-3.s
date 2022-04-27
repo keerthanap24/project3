@@ -40,7 +40,8 @@ sub_a:
                 beqz $t1, jr $ra            # if length of string is zero exit subprogram
                 addi $sp, $sp, -12  
                 sw $t1, 8($sp)              # push length of string onto stack
-                                        # push two more values on to the stack for return values
+                                            # push two more values on to the stack for return values
+                # push register values to stack to use them in sub_b
                 jal sub_b                   # calls subprogram b
                 lw $t4, 0($sp)              # gets return value (0 or 1) check return value 1 for success or failure
                 beq $t4, $zero, invalid     # if return value is zero branch to invalid label
@@ -55,3 +56,13 @@ sub_a:
         comma:
                 li $t6, ','
                 li $v0, 4                   # prints comma if semicolon is found
+
+
+sub_b:
+        addi $sp, $sp, -4
+        sw $t0, 0($sp)
+        lw $t0, 12($sp)
+        lw $t1, 8($sp)
+        addi $s1, $t1, 0                    # stores string length in $s0 (saved register)
+        add $v1, $t0, $s1                   # finds the address of the last character
+        addi $s2, $v1, 0                    # stores last character address to $s2
