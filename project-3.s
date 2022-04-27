@@ -36,8 +36,9 @@ sub_a:
             addi $t0, $t0, 1            # else increment pointer by one
             j loop                      # jump back to beginning of loop
         continue:
+            lw $ra, 16($sp)             # call return address back from stack
             beqz $t1, jr $ra            # if length of string is zero exit subprogram
-            addi $sp, $sp, -12
+            addi $sp, $sp, -12  
             sw $t1, 8($sp)              # push length of string onto stack
                                         # push two more values on to the stack for return values
             jal sub_b                   # calls subprogram b
@@ -46,3 +47,8 @@ sub_a:
             lw $t5, 4($sp)              # gets decimal return value from stack
             li $v0, 1                   # syscall for print decimal
             syscall
+            beq $t0, $t2, comma         # branch to comma label if last character is semicolon
+            beqz $t0, jr $ra            # if last character is zero exit the loop
+            addi $t0, $t0, 1            # increment pointer to character after semicolon
+            li $t1, $zero               # start length count again from 0
+            j loop                      # jump back to beginning of loop label
