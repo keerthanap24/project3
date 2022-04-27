@@ -74,13 +74,12 @@ sub_a:
 
 
 sub_b:
-        # save t0 to stack
         lw $t0, 12($sp)
         lw $t1, 8($sp)
         addi $s1, $t1, 0                        # stores string length in $s0 (saved register)
         add $v1, $t0, $s1                       # finds the address of the last character
         addi $s2, $v1, 0                        # stores last character address to $s2
-        beqz $s1, jr $ra		        # if length of string is 0 exit the program
+        beqz $s1, j exit		        # if length of string is 0 exit the program
 
         move $a0, $s1		                # pass length of string as an argument for whitespace subprogram
         move $a1, $s0		                # pass pointer to beginning of string as an argument for whitespace subprogram
@@ -215,8 +214,14 @@ sub_b:
         success:
                 li $t7, 1
                 sw $t7, 16($sp)
+                jr $ra
 
         error:
                 li $t8, $zero
                 sw $t8, 16($sp)
+                jr $ra
+
+        exit:	
+	            li $v0, 10              # mips system call to exit program
+	            syscall
 
