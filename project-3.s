@@ -56,6 +56,10 @@ sub_a:
         comma:
                 li $t6, ','
                 li $v0, 4                   # prints comma if semicolon is found
+        invalid:
+                la $a0, message             # load address of message (defined in data section) to $a0
+                li $v0, 4                   # system call for print message
+                syscall                 
 
 
 sub_b:
@@ -197,9 +201,4 @@ sub_b:
                 addi $t0, $t0, 1		# increment loop index
                 j loop_3                        # jumps back to loop_3
 
-        valid:
-	        # 1 for valid           
-                
-                     
-        invalid:
-               	# 0 for invalid
+
