@@ -44,7 +44,8 @@ sub_a:
                         addi $t0, $t0, 1                # goto next character
                         j loop_find_length              # jump back to beginning of loop
                 continue:
-                        beqz $t7, exit_sub_a            # if end of the string exit sub_a
+                        #subtract 1 from length - keerthana
+                        #beqz $t7, exit_sub_a            # if end of the string exit sub_a
                         addi $sp, $sp, -12              # else push the length of the string and two return values on to stack
                         sw $t1, 8($sp)                  # push length of string onto stack
 
@@ -62,7 +63,7 @@ sub_a:
                         lw $t5, 20($sp)                 # gets decimal return value from stack
                         addi $sp, $sp, 28               # pop the stack 
                         beqz $t4, invalid               # if return value is zero branch to invalid label
-                        li $v0, 1                       # syscall for print decimal
+                        li $v0, 4                       # syscall for print decimal
                         add $a0, $t5, 0                 # a0 should be decimal to print
                         syscall
                 sub_string_done:
@@ -105,8 +106,14 @@ sub_b:
         addi $a0, $s1, 0	                # pass length of string to convert subprogram
         move $a1, $s0			        # pass pointer to start of string to convert subprogram
         li $a2, 31			        # pass the exponent base to convert subprogram
+        addi $sp, $sp, -4
+        sw $ra, 0($sp)
         jal convert                             # calling subprogram for converting string to decimal
+l1: 
         move $s3, $v0			        # store the final sum to $s3 after conversion
+        lw $ra, 0($sp)
+        addi $sp, $sp, 4
+        jr $ra
 
 
         removeleadingws:									
@@ -221,11 +228,11 @@ sub_b:
         success:
                 li $t7, 1
                 sw $t7, 16($sp)
-                jr $ra
+                j l1
 
         error:
                 li $t8, 0
                 sw $t8, 16($sp)
-                jr $ra
+                j l1
 
 	            
