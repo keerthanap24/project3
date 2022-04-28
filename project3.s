@@ -109,7 +109,6 @@ sub_b:
         addi $sp, $sp, -4
         sw $ra, 0($sp)
         jal convert                             # calling subprogram for converting string to decimal
-l1: 
         move $s3, $v0			        # store the final sum to $s3 after conversion
         lw $ra, 0($sp)
         addi $sp, $sp, 4
