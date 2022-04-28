@@ -228,11 +228,11 @@ l1:
         success:
                 li $t7, 1
                 sw $t7, 16($sp)
-                j l1
+                jr $ra
 
         error:
                 li $t8, 0
                 sw $t8, 16($sp)
-                j l1
+                jr $ra
 
 	            
